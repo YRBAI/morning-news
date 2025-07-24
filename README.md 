@@ -1,0 +1,175 @@
+# Multi-Country News Scraper
+
+A modular news scraping system that collects articles from multiple countries and sources, organized into clean Excel spreadsheets.
+
+## 📁 Project Structure
+
+```
+MorningNews/
+├── app.py                  # NEW - Flask app
+├── templates/              # NEW - Templates folder
+│   └── dashboard.html      # NEW - Dashboard
+├── config.py              # EXISTING
+├── utils.py               # EXISTING  
+├── main.py                # EXISTING
+├── excel_generator.py     # EXISTING
+└── scrapers/              # EXISTING
+    ├── __init__.py
+    ├── singapore.py
+    ├── japan.py
+    ├── india.py
+    ├── korea.py
+    ├── yahoo.py
+    └── others.py
+```
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+pip install requests beautifulsoup4 pandas openpyxl deep-translator selenium webdriver-manager
+```
+
+### 2. Run the Scraper
+```bash
+python main.py
+```
+
+### 3. Find Results
+Results will be saved to `~/Desktop/news_collection/daily_news_YYYYMMDD.xlsx`
+
+## 📊 Excel Output Structure
+
+The generated Excel file contains sheets in this order:
+
+1. **Singapore** - Combined sources (Edge Singapore, Business Times, Straits Times, Yahoo Finance)
+2. **Japan** - Nikkei Asia articles
+3. **India** - Hindustan Times India News
+4. **Korea** - SEdaily Korea (Korean→English translated)
+5. **Yahoo Finance** - UK Investing, UK Stocks, US Latest News
+6. **TradeWinds** - Maritime/shipping news
+7. **Bloomberg** - Financial news
+8. **TrendForce** - Technology trends
+9. **UDN Money** - Taiwan financial news (Chinese→English translated)
+10. **GMK Center** - Agricultural commodity news
+
+## 🔧 Building Executable
+
+To create a single .exe file:
+
+```bash
+# Install PyInstaller
+pip install pyinstaller
+
+# Create executable
+pyinstaller --onefile --windowed --name "news_scraper" main.py
+
+# Find your .exe in the dist/ folder
+```
+
+## 🧪 Testing Individual Scrapers
+
+Each scraper can be tested independently:
+
+```bash
+# Test Singapore sources
+python -c "from scrapers import singapore; print(len(singapore.fetch_all()))"
+
+# Test Japan (Nikkei Asia)
+python -c "from scrapers import japan; print(len(japan.fetch_articles()))"
+
+# Test India (Hindustan Times)
+python -c "from scrapers import india; print(len(india.fetch_articles()))"
+
+# Test Korea (SEdaily with translation)
+python -c "from scrapers import korea; print(len(korea.fetch_articles()))"
+
+# Test Yahoo Finance
+python -c "from scrapers import yahoo; print(len(yahoo.fetch_articles()))"
+```
+
+## 🔧 Configuration
+
+### Adding New Sources
+1. Edit `config.py` to add new URLs
+2. Create new scraper function in appropriate file
+3. Add to main collection in `main.py`
+
+### Changing Collection Hours
+- Monday: 72 hours (weekend catch-up)
+- Other days: 24 hours
+- Modify `get_collection_hours()` in `utils.py`
+
+### Translation Settings
+- Korean→English: Uses GoogleTranslator
+- Chinese→English: Uses GoogleTranslator
+- Modify `safe_translate()` in `utils.py`
+
+### Yahoo Finance Configuration
+- **UK Investing**: `https://uk.finance.yahoo.com/topic/investing/`
+- **UK Stocks**: `https://uk.finance.yahoo.com/topic/stocks/`
+- **US Latest News**: `https://finance.yahoo.com/topic/latest-news/`
+- Automatically combines all three sources into one sheet
+- Removes duplicates based on article URLs
+
+## 🐛 Debugging
+
+### Common Issues
+
+1. **Selenium not working**: Install ChromeDriver or use webdriver-manager
+2. **Translation failing**: Check internet connection for GoogleTranslator
+3. **No articles found**: Check if website structure changed
+4. **Excel generation failing**: Ensure write permissions to Desktop
+5. **Yahoo Finance failing**: Check if Yahoo Finance URLs are accessible
+
+### Debug Individual Scrapers
+
+```bash
+# Run individual scrapers with debug output
+python scrapers/japan.py
+python scrapers/singapore.py
+python scrapers/india.py
+python scrapers/korea.py
+python scrapers/yahoo.py
+```
+
+## 🎯 Features
+
+- ✅ **Modular Design** - Easy to maintain and extend
+- ✅ **Auto Translation** - Korean and Chinese to English
+- ✅ **Excel Export** - Clickable hyperlinks
+- ✅ **Error Handling** - Robust retry mechanisms
+- ✅ **Rate Limiting** - Respectful to websites
+- ✅ **Deduplication** - Removes duplicate articles
+- ✅ **Single .exe** - Easy deployment
+- ✅ **Yahoo Finance Integration** - Multi-topic coverage
+
+## 📈 Adding New Countries
+
+1. Create new scraper file: `scrapers/new_country.py`
+2. Implement `fetch_articles()` function
+3. Add to `scrapers/__init__.py`
+4. Add to main collection in `main.py`
+5. Update Excel generator for new sheet
+
+## 🌐 Yahoo Finance Details
+
+The Yahoo Finance scraper collects articles from three main categories:
+- **Investing News**: UK-focused investment articles
+- **Stocks News**: UK stock market updates
+- **Latest News**: US general financial news
+
+All articles are combined into a single "Yahoo Finance" sheet with source attribution in the site column (e.g., "Yahoo Finance (investing)").
+
+## 🚨 Important Notes
+
+- **Selenium Required**: For Edge Singapore (JavaScript-heavy site)
+- **Rate Limiting**: Built-in delays to be respectful to websites
+- **Error Recovery**: Continues if individual scrapers fail
+- **Translation**: Requires internet connection for GoogleTranslator
+- **Excel Format**: Uses HYPERLINK formula for single-click links
+- **Yahoo Finance**: Uses multiple scraping methods for reliable headline extraction
+
+## 📞 Support
+
+Each scraper is self-contained and can be debugged independently. Check the console output for detailed error messages and progress tracking.
